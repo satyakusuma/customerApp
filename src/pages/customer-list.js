@@ -42,17 +42,28 @@ const CustomerList = () => {
       if (params.toString()) {
         url += `?${params.toString()}`;
       }
-
-      const response = await fetch(url);
+  
+      console.log("Fetching customers from:", url); // Add this log
+  
+      const response = await fetch(url, {
+        headers: {
+          'Cache-Control': 'no-cache', // Disable cache
+        },
+      });
+  
       if (!response.ok) throw new Error('Failed to fetch customers');
+      
       const data = await response.json();
+      console.log("Fetched customers data:", data); // Add this log
+  
       setCustomers(data);
+      setFilteredCustomers(data); // Sync filteredCustomers with the fetched data
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const applyFilters = () => {
     let filtered = [...customers];
