@@ -52,14 +52,12 @@ const CustomerEdit = () => {
 
     try {
       const formData = new FormData();
-      // Append all customer fields
       Object.keys(customer).forEach(key => {
         if (customer[key] && key !== 'photo_url') {
           formData.append(key, customer[key]);
         }
       });
-      
-      // Append photo if there's a new one
+
       if (photoFile) {
         formData.append('photo', photoFile);
       }
@@ -84,11 +82,11 @@ const CustomerEdit = () => {
   };
 
   if (loading) {
-    return <div className="text-center text-xl">Loading...</div>;
+    return <div className="text-center text-xl text-blue-600">Loading...</div>;
   }
 
   return (
-    <form onSubmit={handleUpdate} className="max-w-xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6">
+    <form onSubmit={handleUpdate} className="max-w-xl mx-auto p-6 bg-blue-50 rounded-xl shadow-md space-y-6">
       <h1 className="text-2xl font-bold text-blue-800">Edit Customer</h1>
       
       {error && (
@@ -101,7 +99,6 @@ const CustomerEdit = () => {
         <div className="flex flex-col items-center space-y-4">
           {photoPreview && (
             <div className="relative w-32 h-32 rounded-full overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={photoPreview}
                 alt="Customer photo preview"
@@ -162,6 +159,15 @@ const CustomerEdit = () => {
         onChange={(e) => setCustomer({ ...customer, country: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md"
       />
+      <select
+        value={customer.nationality || ''}
+        onChange={(e) => setCustomer({ ...customer, nationality: e.target.value })}
+        className="w-full p-2 border border-gray-300 rounded-md"
+      >
+        <option value="">Select Nationality</option>
+        <option value="WNI">WNI</option>
+        <option value="WNA">WNA</option>
+      </select>
       <button 
         type="submit" 
         disabled={updating}

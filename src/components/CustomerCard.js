@@ -20,7 +20,7 @@ const CustomerCard = ({ customer, onDelete }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
+    <div className="bg-blue-50 p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
       {customer.photo_url && (
         <div className="relative h-48 w-full mb-4 rounded-t-xl overflow-hidden">
           <img
@@ -31,25 +31,25 @@ const CustomerCard = ({ customer, onDelete }) => {
         </div>
       )}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-blue-800">{customer.name}</h2>
-        <p className="text-gray-600">{customer.email}</p>
-        <p className="text-gray-600">{customer.phone}</p>
-        <p className="text-gray-600">{customer.address}</p>
-        <p className="text-gray-600">{customer.country}</p>
+        <h2 className="text-2xl font-bold text-blue-900">{customer.name}</h2>
+        <p className="text-gray-700">{customer.email}</p>
+        <p className="text-gray-700">{customer.phone}</p>
+        <p className="text-gray-700">{customer.address}</p>
+        <p className="text-gray-700">{customer.country}</p>
         <div className="flex justify-center space-x-4 mt-4">
           <Link href={`/customer-detail?id=${customer.id}`} legacyBehavior>
-            <a className="px-6 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-colors duration-300">
+            <a className="px-6 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors duration-300">
               Detail
             </a>
           </Link>
           <Link href={`/customer-edit?id=${customer.id}`} legacyBehavior>
-            <a className="px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors duration-300">
+            <a className="px-6 py-2 bg-yellow-600 text-white rounded-full hover:bg-yellow-700 transition-colors duration-300">
               Edit
             </a>
           </Link>
           <button
             onClick={() => setShowPopup(true)}
-            className="px-6 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-300"
+            className="px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors duration-300"
           >
             Delete
           </button>
@@ -64,7 +64,7 @@ const CustomerCard = ({ customer, onDelete }) => {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => handleDelete(customer.id)}
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-300 mr-2"
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-300 mr-2"
               >
                 Yes
               </button>

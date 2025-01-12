@@ -139,79 +139,80 @@ const handler = async (req, res) => {
       });
       break;
 
-      case "PUT":
-        try {
-          const form = new IncomingForm();
-          form.parse(req, async (err, fields, files) => {
-            if (err) {
-              res.status(500).json({ error: err.message });
-              return;
-            }
-  
-            const updateId = query.id; // Get ID from query params
-            if (!updateId) {
-              res.status(400).json({ error: "ID is required for updates" });
-              return;
-            }
-  
-            // Extract fields, handling potential array values
-            const updates = {
-              name: fields.name?.[0] || fields.name || "",
-              email: fields.email?.[0] || fields.email || "",
-              phone: fields.phone?.[0] || fields.phone || "",
-              address: fields.address?.[0] || fields.address || "",
-              country: fields.country?.[0] || fields.country || "",
-            };
-  
-            // Handle photo upload if present
-            if (files.photo) {
-              const file = Array.isArray(files.photo) ? files.photo[0] : files.photo;
-              if (file && file.filepath) {
-                try {
-                  const fileData = fs.readFileSync(file.filepath);
-                  const filePath = `public/${updates.name}_${Date.now()}_${file.originalFilename}`;
-  
-                  const { error: uploadError } = await supabase.storage
-                    .from("customer-photos")
-                    .upload(filePath, fileData, {
-                      contentType: file.mimetype,
-                      upsert: true
-                    });
-  
-                  if (uploadError) throw uploadError;
-  
-                  const { data: publicURLData } = await supabase.storage
-                    .from("customer-photos")
-                    .getPublicUrl(filePath);
-  
-                  updates.photo_url = publicURLData.publicUrl;
-                } catch (fileError) {
-                  console.error("File processing error:", fileError);
-                  res.status(500).json({ error: "Error processing file upload" });
-                  return;
-                }
+    case "PUT":
+      try {
+        const form = new IncomingForm();
+        form.parse(req, async (err, fields, files) => {
+          if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+          }
+
+          const updateId = query.id;
+          if (!updateId) {
+            res.status(400).json({ error: "ID is required for updates" });
+            return;
+          }
+
+          // Extract fields, handling potential array values
+          const updates = {
+            name: fields.name?.[0] || fields.name || "",
+            email: fields.email?.[0] || fields.email || "",
+            phone: fields.phone?.[0] || fields.phone || "",
+            address: fields.address?.[0] || fields.address || "",
+            country: fields.country?.[0] || fields.country || "",
+            nationality: fields.nationality?.[0] || fields.nationality || "",
+          };
+
+          // Handle photo upload if present
+          if (files.photo) {
+            const file = Array.isArray(files.photo) ? files.photo[0] : files.photo;
+            if (file && file.filepath) {
+              try {
+                const fileData = fs.readFileSync(file.filepath);
+                const filePath = `public/${updates.name}_${Date.now()}_${file.originalFilename}`;
+
+                const { error: uploadError } = await supabase.storage
+                  .from("customer-photos")
+                  .upload(filePath, fileData, {
+                    contentType: file.mimetype,
+                    upsert: true
+                  });
+
+                if (uploadError) throw uploadError;
+
+                const { data: publicURLData } = await supabase.storage
+                  .from("customer-photos")
+                  .getPublicUrl(filePath);
+
+                updates.photo_url = publicURLData.publicUrl;
+              } catch (fileError) {
+                console.error("File processing error:", fileError);
+                res.status(500).json({ error: "Error processing file upload" });
+                return;
               }
             }
-  
-            // Perform the update
-            const { data: updatedData, error: updateError } = await supabase
-              .from("customers")
-              .update(updates)
-              .eq("id", updateId)
-              .select()
-              .single();
-  
-            if (updateError) {
-              res.status(500).json({ error: updateError.message });
-              return;
-            }
-  
-            res.status(200).json(updatedData);
-          });
-        } catch (error) {
-          res.status(500).json({ error: error.message });
-        }
-        break;
+          }
+
+          // Perform the update
+          const { data: updatedData, error: updateError } = await supabase
+            .from("customers")
+            .update(updates)
+            .eq("id", updateId)
+            .select()
+            .single();
+
+          if (updateError) {
+            res.status(500).json({ error: updateError.message });
+            return;
+          }
+
+          res.status(200).json(updatedData);
+        });
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+      break;
 
     case "DELETE":
       try {
@@ -243,7 +244,7 @@ const handler = async (req, res) => {
       break;
 
     default:
-      res.setHeader("Allow", ["GET", "POST", PUT, "DELETE"]);
+      res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
       res.status(405).end(`Method ${method} Not Allowed`);
       break;
   }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, Calendar, Filter } from 'lucide-react';
+import { Search,  Filter } from 'lucide-react';
 import CustomerCard from '../components/CustomerCard';
 
 const CustomerList = () => {
@@ -29,8 +29,7 @@ const CustomerList = () => {
       setLoading(true);
       setError(null);
       let url = '/api/customers';
-      
-      // Add filter parameters if they exist
+  
       const params = new URLSearchParams();
       if (nationality) params.append('nationality', nationality);
       if (dateRange.startDate && dateRange.endDate) {
@@ -38,32 +37,37 @@ const CustomerList = () => {
         params.append('endDate', dateRange.endDate);
       }
       if (searchQuery) params.append('search', searchQuery);
-      
+  
       if (params.toString()) {
         url += `?${params.toString()}`;
       }
   
-      console.log("Fetching customers from:", url); // Add this log
+      console.log("Fetching customers from:", url);
   
       const response = await fetch(url, {
         headers: {
-          'Cache-Control': 'no-cache', // Disable cache
+          'Cache-Control': 'no-cache',
         },
       });
   
-      if (!response.ok) throw new Error('Failed to fetch customers');
-      
+      console.log("Response status:", response.status);
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch customers');
+      }
+  
       const data = await response.json();
-      console.log("Fetched customers data:", data); // Add this log
+      console.log("Fetched customers data:", data);
   
       setCustomers(data);
-      setFilteredCustomers(data); // Sync filteredCustomers with the fetched data
+      setFilteredCustomers(data);
     } catch (err) {
+      console.error("Fetch error:", err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   const applyFilters = () => {
     let filtered = [...customers];
@@ -83,10 +87,10 @@ const CustomerList = () => {
 
     // Apply date range filter
     if (dateRange.startDate && dateRange.endDate) {
+      const start = new Date(dateRange.startDate).setHours(0, 0, 0, 0);
+      const end = new Date(dateRange.endDate).setHours(23, 59, 59, 999);
       filtered = filtered.filter(customer => {
         const customerDate = new Date(customer.created_at).getTime();
-        const start = new Date(dateRange.startDate).getTime();
-        const end = new Date(dateRange.endDate).getTime();
         return customerDate >= start && customerDate <= end;
       });
     }
